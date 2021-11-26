@@ -5,32 +5,64 @@ class Hangman
     @key_clues = ''
     @secret_word.length.times { @key_clues << '_' }
     puts @secret_word
-    @solved_letters = []
+    @correct_letters = []
     @incorrect_letters = []
-    turn_order(@secret_word)
+    @remaining_guess = 10
   end
-
-  def turn_order(secret_word)
-    begin
-      puts 'Please enter your guess in one letter'
+  
+  def play_game
+    loop do
+      turn_order
+      print 'Please enter your guess in one letter: '
       guess = gets.chomp
-      raise "Invalid input: #{guess}" unless /[[:alpha:]]/.match(guess) && guess.length == 1
+      return "Invalid input: #{guess}" unless /[[:alpha:]]/.match(guess) && guess.length == 1
       
       enter_guess(guess.downcase)
-    rescue StandardError => e
-      puts e.to_s
-      retry
+
+      break if over?
+    # rescue StandardError => e
+    #   puts e.to_s
+    #   retry
     end
+  end
+
+  def over?
+    if @secret_word == @key_clues
+      puts 'You guessed the word!'
+      puts @secret_word
+      puts
+      turn_order
+    elsif @remaining_guess.zero?
+      puts "Unfortunately, you couldn't guess the word :("
+      puts @secret_word
+      puts
+      true
+    end
+  end
+
+  def turn_order
+    if @remaining_guess < 10
+      print "Incorrect letters: "
+      @incorrect_letters.each { |guess| print guess.to_s + ' ' }
+      puts
+    end
+    if @remaining_guess > 1
+      puts "Incorrect guess remaining: #{@remaining_guess}"
+    else
+      puts "Last chance!"
+    end
+    puts @key_clues
   end
 
   def enter_guess(char)
     if @secret_word.include?(char)
-      @solved_letters << char
+      @correct_letters << char
       add_clue(char)
       puts
       puts 'Good move!'
     else
       @incorrect_letters << char
+      @remaining_guess -= 1
       puts
       puts "Sorry that's not included"
     end
@@ -41,8 +73,6 @@ class Hangman
       @key_clues[i] = char if v == char
     end
   end
-
-  # puts 'Hangman initialized.'
 
   def generate_word
     text_file = File.open('5desk.txt', 'r')

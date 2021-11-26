@@ -1,3 +1,3 @@
 require_relative 'hangman'
 
-Hangman.new
+Hangman.new.play_game
