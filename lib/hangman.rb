@@ -1,7 +1,8 @@
-class Hangman
+require_relative 'color'
 
+class Hangman
   def initialize
-    @secret_word = generate_word
+    @secret_word = generate_word.downcase
     @key_clues = ''
     @secret_word.length.times { @key_clues << '_' }
     puts @secret_word
@@ -9,47 +10,56 @@ class Hangman
     @incorrect_letters = []
     @remaining_guess = 10
   end
-  
+
   def play_game
     loop do
       turn_order
-      print 'Please enter your guess in one letter: '
+      print 'Please enter your guess in one letter: '.blue
       guess = gets.chomp
-      return "Invalid input: #{guess}" unless /[[:alpha:]]/.match(guess) && guess.length == 1
-      
-      enter_guess(guess.downcase)
+      if /[^a-z]/.match(guess) || guess.length > 1 || guess.length.zero?
+        puts "Invalid input: #{guess}".red
+        break
+      end
 
-      break if over?
-    # rescue StandardError => e
-    #   puts e.to_s
-    #   retry
+      check_guess(guess.downcase)
+
+      break if game_over || game_solved
     end
   end
 
-  def over?
-    if @secret_word == @key_clues
-      puts 'You guessed the word!'
-      puts @secret_word
-      puts
-      turn_order
-    elsif @remaining_guess.zero?
-      puts "Unfortunately, you couldn't guess the word :("
-      puts @secret_word
-      puts
-      true
+  def check_guess(guess)
+    if @correct_letters.include?(guess) || @incorrect_letters.include?(guess)
+      puts "\nYou've already guessed that letter!".red
+    else
+      enter_guess(guess)
     end
+  end
+
+  def game_over
+    return unless @remaining_guess.zero?
+
+    puts "Unfortunately, you couldn't guess the word :(".red
+    puts "#{@secret_word}\n".cyan
+    true
+  end
+
+  def game_solved
+    return unless @secret_word == @key_clues
+
+    puts 'You guessed the word!'.green
+    puts "#{@secret_word}\n".cyan
+    true
   end
 
   def turn_order
     if @remaining_guess < 10
-      print "Incorrect letters: "
-      @incorrect_letters.each { |guess| print guess.to_s + ' ' }
-      puts
+      print 'Incorrect letters: '.magenta
+      @incorrect_letters.each { |guess| print "#{guess} ".magenta }
     end
     if @remaining_guess > 1
-      puts "Incorrect guess remaining: #{@remaining_guess}"
+      puts "\nIncorrect guess remaining: #{@remaining_guess}".cyan
     else
-      puts "Last chance!"
+      puts 'Last chance!'.red
     end
     puts @key_clues
   end
@@ -58,13 +68,12 @@ class Hangman
     if @secret_word.include?(char)
       @correct_letters << char
       add_clue(char)
-      puts
-      puts 'Good move!'
+      puts "\nGood move!\n".green
     else
       @incorrect_letters << char
       @remaining_guess -= 1
       puts
-      puts "Sorry that's not included"
+      puts "Sorry, that's not included\n".red
     end
   end
 
@@ -79,10 +88,7 @@ class Hangman
     words = []
     text_file.each_line do |word|
       word = word.chomp
-      if word.length <= 12 &&
-        word.length >= 5
-        words << word
-      end
+      words << word if word.length <= 12 && word.length >= 5
     end
     text_file.close
     words.sample
