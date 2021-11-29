@@ -1,6 +1,10 @@
 require_relative 'color'
+require_relative 'database'
+require 'yaml'
 
 class Hangman
+  include Database
+
   def initialize
     @secret_word = generate_word.downcase
     @key_clues = ''
@@ -16,19 +20,18 @@ class Hangman
       turn_order
       print 'Please enter your guess in one letter: '.blue
       guess = gets.chomp
-      if /[^a-z]/.match(guess) || guess.length > 1 || guess.length.zero?
-        puts "Invalid input: #{guess}".red
-        break
-      end
 
-      check_guess(guess.downcase)
+      process_guess(guess.downcase)
 
-      break if game_over || game_solved
+      save_game if guess == 'save'
+      break if game_over || game_solved || guess == 'save'
     end
   end
 
-  def check_guess(guess)
-    if @correct_letters.include?(guess) || @incorrect_letters.include?(guess)
+  def process_guess(guess)
+    if guess.match(/[^a-z]/) || guess.length.zero?
+      puts "Invalid input: #{guess}"
+    elsif @correct_letters.include?(guess) || @incorrect_letters.include?(guess)
       puts "\nYou've already guessed that letter!".red
     else
       enter_guess(guess)

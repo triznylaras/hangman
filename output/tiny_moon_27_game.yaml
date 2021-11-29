@@ -1,0 +1,10 @@
+---
+secret_word: peregrine
+correct_letters:
+- r
+- e
+incorrect_letters:
+- a
+- w
+- t
+- y

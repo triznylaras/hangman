@@ -1,0 +1,13 @@
+---
+secret_word: denture
+correct_letters:
+- e
+- d
+- t
+- r
+- u
+incorrect_letters:
+- a
+- b
+- p
+- save

@@ -1,0 +1,13 @@
+---
+secret_word: lubricate
+correct_letters:
+- a
+- e
+- t
+- r
+incorrect_letters:
+- w
+- n
+- m
+- f
+- j
