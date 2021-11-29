@@ -1,9 +1,11 @@
 require_relative 'color'
 require_relative 'database'
+require_relative 'display'
 require 'yaml'
 
 class Hangman
   include Database
+  include Display
 
   def initialize
     @secret_word = generate_word.downcase
@@ -13,26 +15,47 @@ class Hangman
     @correct_letters = []
     @incorrect_letters = []
     @remaining_guess = 10
+    choose_game
+  end
+
+  def choose_game
+    puts display_instructions.green
+    game_type = user_input(display_start.blue, /^[12]/)
+    play_game if game_type == '1'
+    load_game if game_type == '2'
+  end
+
+  def user_input(prompt, regex)
+    loop do
+      print prompt
+      input = gets.chomp
+      input.match(regex) ? (return input) : puts(display_input_warning)
+    end
   end
 
   def play_game
+    puts display_new_random_word
+    puts display_turn_prompt
     loop do
       turn_order
       print 'Please enter your guess in one letter: '.blue
       guess = gets.chomp
 
-      process_guess(guess.downcase)
-
       save_game if guess == 'save'
-      break if game_over || game_solved || guess == 'save'
+
+      filter_guess(guess.downcase)
+
+      break if game_over || game_solved || guess == 'save' || guess == 'exit'
     end
   end
 
-  def process_guess(guess)
+  def filter_guess(guess)
     if guess.match(/[^a-z]/) || guess.length.zero?
       puts "Invalid input: #{guess}"
     elsif @correct_letters.include?(guess) || @incorrect_letters.include?(guess)
       puts "\nYou've already guessed that letter!".red
+    elsif guess.include?('save') || guess.include?('exit')
+      puts 'Thank you for playing Hangman!'
     else
       enter_guess(guess)
     end
@@ -59,11 +82,10 @@ class Hangman
       print 'Incorrect letters: '.magenta
       @incorrect_letters.each { |guess| print "#{guess} ".magenta }
     end
-    if @remaining_guess > 1
-      puts "\nIncorrect guess remaining: #{@remaining_guess}".cyan
-    else
-      puts 'Last chance!'.red
-    end
+    puts "\nIncorrect guesses remaining: #{@remaining_guess}".cyan if @remaining_guess > 1
+    puts 'Be careful! There are only 3 chances left!'.red if @remaining_guess == 3
+    puts 'Last chance!'.red if @remaining_guess == 1
+
     puts @key_clues
   end
 

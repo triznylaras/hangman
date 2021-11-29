@@ -29,9 +29,19 @@ module Database
   end
 
   def show_file_list
+    puts display_saved_games
     file_list.each_with_index do |name, index|
-      puts 'Here is the list of the saved game: '
-      puts "#{index + 1}, #{name}"
+      puts display_list_saved_game((index + 1).to_s, name.to_s)
     end
+  end
+
+  def load_game
+    find_saved_file
+  end
+
+  def find_saved_file
+    show_file_list
+    file_number = user_input(display_saved_prompt, /\d+|^exit$/)
+    @saved_game = file_list[file_number.to_i - 1] unless file_number == 'exit'
   end
 end
