@@ -1,0 +1,14 @@
+---
+secret_word: contrarily
+correct_letters:
+- a
+incorrect_letters:
+- s
+- d
+- f
+- g
+- h
+- j
+- k
+key_clues: _____a____
+remaining_guess: 3

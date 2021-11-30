@@ -1,0 +1,13 @@
+---
+secret_word: marinade
+correct_letters:
+- a
+- e
+- r
+- i
+incorrect_letters:
+- t
+- y
+- u
+- o
+remaining_guess: 6

@@ -1,0 +1,17 @@
+---
+secret_word: affectless
+correct_letters:
+- a
+- e
+- t
+- f
+- c
+incorrect_letters:
+- w
+- r
+- y
+- u
+- h
+- g
+key_clues: affect_e__
+remaining_guess: 4
