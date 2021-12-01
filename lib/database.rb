@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# A module that contains function to save and load game files
 module Database
   def save_game
     Dir.mkdir 'output' unless Dir.exist? 'output'

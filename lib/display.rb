@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# A module to store display text function
 module Display
   def display_instructions
     <<~HEREDOC

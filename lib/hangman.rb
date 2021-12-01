@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require_relative 'color'
 require_relative 'database'
 require_relative 'display'
 require 'yaml'
 
+# A class for basic logic of the game
 class Hangman
   include Database
   include Display
@@ -11,7 +14,6 @@ class Hangman
     @secret_word = generate_word.downcase
     @key_clues = ''
     @secret_word.length.times { @key_clues << '_' }
-    puts @secret_word
     @correct_letters = []
     @incorrect_letters = []
     @remaining_guess = 10
@@ -37,7 +39,7 @@ class Hangman
     puts display_new_random_word
     puts display_turn_prompt
     loop do
-      turn_order
+      player_turn
       print 'Please enter your guess in one letter: '.blue
       guess = gets.chomp
 
@@ -77,7 +79,7 @@ class Hangman
     true
   end
 
-  def turn_order
+  def player_turn
     if @remaining_guess < 10
       print 'Incorrect letters: '.magenta
       @incorrect_letters.each { |guess| print "#{guess} ".magenta }
