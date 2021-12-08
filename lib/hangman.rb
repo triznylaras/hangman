@@ -22,7 +22,6 @@ class Hangman
 
   def choose_game
     puts display_instructions.green
-    # binding.pry
     game_type = user_input(display_start.blue, /^[12]/)
     play_game if game_type == '1'
     load_game if game_type == '2'
@@ -53,15 +52,15 @@ class Hangman
   end
 
   def filter_guess(guess)
-    if guess.match(/[^a-z]/) || guess.length.zero?
-      puts "Invalid input: #{guess}"
-    elsif @correct_letters.include?(guess) || @incorrect_letters.include?(guess)
-      puts "\nYou've already guessed that letter!".red
-    elsif guess.include?('save') || guess.include?('exit')
-      puts 'Thank you for playing Hangman!'
-    else
-      enter_guess(guess)
-    end
+    return puts "Invalid input: #{guess}" if guess.match(/[^a-z]/) || guess.length.zero?
+    return puts "\nYou've already guessed that letter!".red if guessed_letter?(guess)
+    return puts 'Thank you for playing Hangman!' if guess.include?('save') || guess.include?('exit')
+
+    enter_guess(guess)
+  end
+
+  def guessed_letter?(guess)
+    @correct_letters.include?(guess) || @incorrect_letters.include?(guess)
   end
 
   def game_over
@@ -86,22 +85,26 @@ class Hangman
       @incorrect_letters.each { |guess| print "#{guess} ".magenta }
     end
     puts "\nIncorrect guesses remaining: #{@remaining_guess}".cyan if @remaining_guess > 1
-    puts 'Be careful! There are only 3 chances left!'.red if @remaining_guess == 3
-    puts 'Last chance!'.red if @remaining_guess == 1
+    puts "\nBe careful! It's only #{@remaining_guess} chances left!".yellow if @remaining_guess <= 3
 
     puts @key_clues
   end
 
   def enter_guess(char)
+    return puts "\nGood move!\n".green if correct_guess?(char)
+
+    puts "\nSorry, that's not included\n".red
+  end
+
+  def correct_guess?(char)
     if @secret_word.include?(char)
       @correct_letters << char
       add_clue(char)
-      puts "\nGood move!\n".green
+      true
     else
       @incorrect_letters << char
       @remaining_guess -= 1
-      puts
-      puts "Sorry, that's not included\n".red
+      false
     end
   end
 
