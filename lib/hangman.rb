@@ -13,7 +13,6 @@ class Hangman
 
   def initialize
     @secret_word = generate_word.downcase
-    @key_clues = ''
     @key_clues = @secret_word.length.times.map { '_' }.join('')
     @correct_letters = []
     @incorrect_letters = []
