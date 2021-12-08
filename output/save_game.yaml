@@ -1,0 +1,15 @@
+---
+secret_word: disastrously
+correct_letters:
+- r
+- t
+- a
+- s
+- d
+- i
+incorrect_letters:
+- q
+- w
+- e
+key_clues: disastr__s__
+remaining_guess: 7

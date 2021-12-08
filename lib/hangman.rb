@@ -4,6 +4,7 @@ require_relative 'color'
 require_relative 'database'
 require_relative 'display'
 require 'yaml'
+require 'pry-byebug'
 
 # A class for basic logic of the game
 class Hangman
@@ -13,7 +14,7 @@ class Hangman
   def initialize
     @secret_word = generate_word.downcase
     @key_clues = ''
-    @secret_word.length.times { @key_clues << '_' }
+    @key_clues = @secret_word.length.times.map { '_' }.join('')
     @correct_letters = []
     @incorrect_letters = []
     @remaining_guess = 10
@@ -22,6 +23,7 @@ class Hangman
 
   def choose_game
     puts display_instructions.green
+    # binding.pry
     game_type = user_input(display_start.blue, /^[12]/)
     play_game if game_type == '1'
     load_game if game_type == '2'
